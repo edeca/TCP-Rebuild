@@ -48,7 +48,7 @@ Will die if the file is not readable or if Net::LibNIDS cannot be initialised.
 =cut
 
 sub rebuild {
-  my ($class, $filename) = @_;
+  my ($self, $filename) = @_;
 
   # Exception if we can't read the file
   if (!-r $filename) {
@@ -64,8 +64,10 @@ sub rebuild {
     die "libnids failed to initialise";
   }
 
-  Net::LibNIDS::tcp_callback(\&_collector);
+  Net::LibNIDS::tcp_callback($self->can('_collector'));
   Net::LibNIDS::run;
+
+  $self->_cleanup;
 
   return 1;
 }
@@ -90,11 +92,25 @@ sub new {
   # Filter should have this added
   #  or (ip[6:2] & 0x1fff != 0)
 
+  $self->{_connections} = {};
+
   return $self;
 }
 
 sub _collector {
 
+}
+
+# Called when libnids finishes processing a file, to expunge old data and
+# close any file handles
+sub _cleanup {
+  my $self = shift;
+
+  my $connections = $self->{_connections};
+  foreach my $key (keys %$connections) {
+    # undef automatically closes file with IO::File
+    undef $$connections{$key}{'fh'};
+  }
 }
 
 =head1 AUTHOR
