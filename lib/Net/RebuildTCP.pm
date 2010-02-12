@@ -2,10 +2,15 @@ package Net::RebuildTCP;
 
 use warnings;
 use strict;
+use Net::LibNIDS 0.02;
+use Socket qw(inet_ntoa);
+use IO::File;
+use Getopt::Long;
+use Date::Format;
 
 =head1 NAME
 
-Net::RebuildTCP - The great new Net::RebuildTCP!
+Net::RebuildTCP - Rebuild TCP streams to files on disk.
 
 =head1 VERSION
 
@@ -18,14 +23,12 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+Rebuilds TCP streams to plain text files on disk, one file per connection.
 
     use Net::RebuildTCP;
 
-    my $foo = Net::RebuildTCP->new();
-    ...
+    my $tcp = Net::RebuildTCP->new();
+    $tcp->rebuild('/path/to/file.pcap');
 
 =head1 EXPORT
 
@@ -34,18 +37,64 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 rebuild
+
+  $tcprebuild->rebuild('/path/to/file.pcap');
+
+This method rebuilds a specific pcap file using the currently set options.
+
+Will die if the file is not readable or if Net::LibNIDS cannot be initialised.
 
 =cut
 
-sub function1 {
+sub rebuild {
+  my ($class, $filename) = @_;
+
+  # Exception if we can't read the file
+  if (!-r $filename) {
+    die "File $filename is not readable";
+  }
+
+  # Net::LibNIDS is not currently object oriented, so this is the best we 
+  # can do
+  Net::LibNIDS::param::set_pcap_filter($self->{filter});
+  Net::LibNIDS::param::set_filename($filename);
+
+  if (!Net::LibNIDS::init) {
+    die "libnids failed to initialise";
+  }
+
+  Net::LibNIDS::tcp_callback(\&_collector);
+  Net::LibNIDS::run;
+
+  return 1;
 }
 
-=head2 function2
+=head2 new
+
+  my $tcp = Net::RebuildTCP->new;
+
+This method constructs a new Net::RebuildTCP object.  
 
 =cut
 
-sub function2 {
+sub new {
+  my $class    = shift;
+  my %defaults = (
+    header	=> 0,
+    filter	=> 'port 80'
+  );
+
+  my $self = bless { %defaults, @_ } => $class;
+
+  # Filter should have this added
+  #  or (ip[6:2] & 0x1fff != 0)
+
+  return $self;
+}
+
+sub _collector {
+
 }
 
 =head1 AUTHOR
@@ -58,7 +107,15 @@ Please report any bugs or feature requests to C<bug-net-rebuildtcp at rt.cpan.or
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Net-RebuildTCP>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
+=head1 TODO
 
+Things that would be nice to implement
+
+=over 4
+
+=item * Dump packet data to XML format
+
+=back
 
 
 =head1 SUPPORT
