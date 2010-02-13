@@ -64,15 +64,11 @@ sub rebuild {
     die "libnids failed to initialise";
   }
 
-  # Without this closure, the callback has no idea about $self
+  # Without this closure, the collector has no idea about $self
   my $callback = sub { 
-#use Data::Dumper;
-#print Dumper \@_;
-    my $args = shift;
-    $self->_collector($args);
+    $self->_collector(@_);
   };
-  Net::LibNIDS::tcp_callback(&$callback);
-  #Net::LibNIDS::tcp_callback($self->can('_collector'));
+  Net::LibNIDS::tcp_callback($callback);
   Net::LibNIDS::run;
 
   $self->_cleanup;
@@ -106,22 +102,9 @@ sub new {
 }
 
 sub _collector {
+  my ($self, $args) = @_;
 
-  print "collector sub called, all args are\n";
-  use Data::Dumper;
-  print Dumper \@_;
-
-  my $self = shift;
-  my $args = shift;
-
-  print "\$self var is:\n";
-  print Dumper \$self;
-  print "\$args var is:\n";
-  print Dumper \$args;
-  
-  # $args here should be the same as if Net::LibNIDS had passed
-  # us it directly
-  #print $args->client_ip;
+  print $args->client_ip;
 }
 
 # Called when libnids finishes processing a file, to expunge old data and
