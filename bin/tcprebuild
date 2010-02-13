@@ -16,9 +16,11 @@ tcprebuild - uses Net::RebuildTCP to reconstruct TCP streams to files on disk
  tcprebuild [options]
 
  Options
-   -i         - input pcap file (required)
-   -h         - print help and exit
-   -v         - print version and exit
+   -i --infile     - input pcap file (required)
+   -f --filter     - pcap capture filter (see tcpdump manpage)
+   -s --separator  - print a separator between packets
+   -h              - print help and exit
+   -v              - print version and exit
 
 =head1 DESCRIPTION
 

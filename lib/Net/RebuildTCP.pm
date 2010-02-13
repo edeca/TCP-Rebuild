@@ -91,7 +91,7 @@ This method constructs a new Net::RebuildTCP object.
 sub new {
   my $class    = shift;
   my %defaults = (
-    header	=> 0,
+    separator	=> 0,
     filter	=> ''
   );
 
@@ -115,8 +115,8 @@ sub _save_data {
 
   my $fh = $connections->{$key}{'fh'};
 
-  # Print a header delimiting packets, this could be customisable
-  if ($self->{header}) {
+  # Print a separator delimiting packets, this could be customisable
+  if ($self->{separator}) {
     print $fh "[$direction +$length] " . $conn->lastpacket_sec . "." . $conn->lastpacket_usec . "\n";
   }
   print $fh $data;
@@ -225,7 +225,7 @@ Things that would be nice to implement
 
 =item * Allow caller to supply a filename template
 
-=item * Allow caller to supply a header template
+=item * Allow caller to supply a separator template
 
 =item * Optional encoding of packet data (e.g. Base64)
 
