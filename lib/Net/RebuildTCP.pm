@@ -120,6 +120,8 @@ print "direction is $direction\n";
     print $fh "[$direction +$length] " . $conn->lastpacket_sec . "." . $conn->lastpacket_usec . "\n";
   }
   print $fh $data;
+
+  return;
 }
 
 sub _collector {
@@ -178,6 +180,7 @@ print "data from server\n";
 
   }
   # UNREACHED, unless Net::LibNIDS changes
+  return;
 }
 
 sub _generate_filename {
@@ -198,10 +201,10 @@ sub _cleanup {
 
   my $connections = $self->{connections};
   foreach my $key (keys %$connections) {
-print "cleaning a connection up\n";
     # undef automatically closes file with IO::File
-    undef $$connections{$key}{'fh'};
+    undef $connections->{$key}{'fh'};
   }
+  return;
 }
 
 =head1 AUTHOR
