@@ -57,7 +57,11 @@ sub rebuild {
 
   # Net::LibNIDS is not currently object oriented, so this is the best we 
   # can do
-  Net::LibNIDS::param::set_pcap_filter($self->{filter});
+  if ($self->{filter} ne '') {
+    # The 
+    my $filter = $self->{filter} . ' or (ip[6:2] & 0x1fff != 0)';
+    Net::LibNIDS::param::set_pcap_filter($filter);
+  }
   Net::LibNIDS::param::set_filename($filename);
 
   if (!Net::LibNIDS::init) {
@@ -93,18 +97,98 @@ sub new {
 
   my $self = bless { %defaults, @_ } => $class;
 
-  # Filter should have this added
-  #  or (ip[6:2] & 0x1fff != 0)
-
-  $self->{_connections} = {};
+  $self->{connections} = {};
 
   return $self;
+}
+
+sub _save_data {
+  my ($self, $key, $conn, $direction) = @_;
+
+  my $connections = $self->{connections};
+print "direction is $direction\n";
+  # Extract the current connection object
+  my $active = ($direction eq "server") ? $conn->client : $conn->server;
+
+  my $data = substr($active->data, 0, $active->count_new);
+  my $length = length $data;
+
+  my $fh = $connections->{$key}{'fh'};
+
+  # Print a header delimiting packets, this could be customisable
+  if ($self->{header}) {
+    print $fh "[$direction +$length] " . $conn->lastpacket_sec . "." . $conn->lastpacket_usec . "\n";
+  }
+  print $fh $data;
 }
 
 sub _collector {
   my ($self, $args) = @_;
 
-  print $args->client_ip;
+  my $connections = $self->{connections};
+
+  my $key = $args->client_ip . ":" . $args->client_port . "-" . $args->server_ip . ":" . $args->server_port;
+
+  if($args->state == Net::LibNIDS::NIDS_JUST_EST()) {
+    # Set the flags to say we want to collect this traffic
+    $args->server->collect_on();
+    $args->client->collect_on();
+
+    # Create an empty buffer
+    $connections->{$key}{'client_buffer'} = '';
+    $connections->{$key}{'server_buffer'} = '';
+    $connections->{$key}{'client_bytes'} = 0;             # Bytes FROM the client
+    $connections->{$key}{'server_bytes'} = 0;             # Bytes FROM the server
+
+    # Create a filehandle that is used subsequently to save data
+    # TODO: We should probably check to see whether the file exists already
+    my $fh = new IO::File $self->_generate_filename($args), O_WRONLY | O_CREAT | O_TRUNC;
+    if (!defined $fh) {
+      die "Could not open output file!";
+    }
+    binmode $fh;
+    $connections->{$key}{'fh'} = $fh;
+  
+  } elsif ($args->state == Net::LibNIDS::NIDS_CLOSE()) {
+ #   $self->_end_connection($key, $args, "was closed");
+    return;
+
+  } elsif ($args->state == Net::LibNIDS::NIDS_RESET()) {
+ #   $self->_end_connection($key, $args, "was reset");
+    return;
+
+  } elsif ($args->state == Net::LibNIDS::NIDS_TIMED_OUT()) {
+ #   $self->_end_connection($key, $args, "timed out");
+    return;
+
+  } elsif ($args->state == Net::LibNIDS::NIDS_DATA()) {
+    # Data toward the client FROM the server
+    if ($args->client->count_new) {
+print "data from server\n";
+      $connections->{$key}{'server_bytes'} += $args->client->count_new;
+      $self->_save_data($key, $args, 'server');
+      return;
+    }
+    # Data toward the server FROM the client
+    if ($args->server->count_new) {
+      $connections->{$key}{'client_bytes'} += $args->server->count_new;
+      $self->_save_data($key, $args, 'client');
+      return;
+    }
+
+  }
+  # UNREACHED, unless Net::LibNIDS changes
+}
+
+sub _generate_filename {
+  my ($self, $conn) = @_;
+
+  my $directory = time2str('%Y-%m-%d', $conn->lastpacket_sec);
+  unless ( -e $directory ) { mkdir($directory); }
+
+  my $name = $directory . '/' . $conn->client_ip . "." . $conn->client_port . "-" . $conn->server_ip . "." . $conn->server_port;
+print "filename is $name\n";
+  return $name;
 }
 
 # Called when libnids finishes processing a file, to expunge old data and
@@ -112,7 +196,7 @@ sub _collector {
 sub _cleanup {
   my $self = shift;
 
-  my $connections = $self->{_connections};
+  my $connections = $self->{connections};
   foreach my $key (keys %$connections) {
 print "cleaning a connection up\n";
     # undef automatically closes file with IO::File
@@ -137,6 +221,14 @@ Things that would be nice to implement
 =over 4
 
 =item * Dump packet data to XML format
+
+=item * Allow caller to supply a filename template
+
+=item * Allow caller to supply a header template
+
+=item * Optional encoding of packet data (e.g. Base64)
+
+=item * Introduce stream/packet statistics
 
 =back
 
