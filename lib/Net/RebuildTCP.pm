@@ -25,10 +25,10 @@ our $VERSION = '0.01';
 
 Rebuilds TCP streams to plain text files on disk, one file per connection.
 
-    use Net::RebuildTCP;
+  use Net::RebuildTCP;
 
-    my $tcp = Net::RebuildTCP->new();
-    $tcp->rebuild('/path/to/file.pcap');
+  my $tcp = Net::RebuildTCP->new();
+  $tcp->rebuild('/path/to/file.pcap');
 
 =head1 EXPORT
 
@@ -64,7 +64,13 @@ sub rebuild {
     die "libnids failed to initialise";
   }
 
-  Net::LibNIDS::tcp_callback($self->can('_collector'));
+  # Without this closure, the callback has no idea about $self
+  my $callback = sub { 
+    my $args = shift;
+    $self->_collector($self, $args);
+  };
+  Net::LibNIDS::tcp_callback(&$callback);
+  #Net::LibNIDS::tcp_callback($self->can('_collector'));
   Net::LibNIDS::run;
 
   $self->_cleanup;
@@ -84,7 +90,7 @@ sub new {
   my $class    = shift;
   my %defaults = (
     header	=> 0,
-    filter	=> 'port 80'
+    filter	=> ''
   );
 
   my $self = bless { %defaults, @_ } => $class;
@@ -98,7 +104,15 @@ sub new {
 }
 
 sub _collector {
+  my $self = shift;
+  my $args = shift;
 
+  print "collector sub called\n";
+  use Data::Dumper;
+
+  # $args here should be the same as if Net::LibNIDS had passed
+  # us it directly
+  print $args->client_ip;
 }
 
 # Called when libnids finishes processing a file, to expunge old data and
@@ -108,6 +122,7 @@ sub _cleanup {
 
   my $connections = $self->{_connections};
   foreach my $key (keys %$connections) {
+print "cleaning a connection up\n";
     # undef automatically closes file with IO::File
     undef $$connections{$key}{'fh'};
   }
