@@ -106,7 +106,7 @@ sub _save_data {
   my ($self, $key, $conn, $direction) = @_;
 
   my $connections = $self->{connections};
-print "direction is $direction\n";
+
   # Extract the current connection object
   my $active = ($direction eq "server") ? $conn->client : $conn->server;
 
@@ -166,7 +166,6 @@ sub _collector {
   } elsif ($args->state == Net::LibNIDS::NIDS_DATA()) {
     # Data toward the client FROM the server
     if ($args->client->count_new) {
-print "data from server\n";
       $connections->{$key}{'server_bytes'} += $args->client->count_new;
       $self->_save_data($key, $args, 'server');
       return;
@@ -190,7 +189,6 @@ sub _generate_filename {
   unless ( -e $directory ) { mkdir($directory); }
 
   my $name = $directory . '/' . $conn->client_ip . "." . $conn->client_port . "-" . $conn->server_ip . "." . $conn->server_port;
-print "filename is $name\n";
   return $name;
 }
 
