@@ -66,8 +66,10 @@ sub rebuild {
 
   # Without this closure, the callback has no idea about $self
   my $callback = sub { 
+#use Data::Dumper;
+#print Dumper \@_;
     my $args = shift;
-    $self->_collector($self, $args);
+    $self->_collector($args);
   };
   Net::LibNIDS::tcp_callback(&$callback);
   #Net::LibNIDS::tcp_callback($self->can('_collector'));
@@ -104,15 +106,22 @@ sub new {
 }
 
 sub _collector {
+
+  print "collector sub called, all args are\n";
+  use Data::Dumper;
+  print Dumper \@_;
+
   my $self = shift;
   my $args = shift;
 
-  print "collector sub called\n";
-  use Data::Dumper;
-
+  print "\$self var is:\n";
+  print Dumper \$self;
+  print "\$args var is:\n";
+  print Dumper \$args;
+  
   # $args here should be the same as if Net::LibNIDS had passed
   # us it directly
-  print $args->client_ip;
+  #print $args->client_ip;
 }
 
 # Called when libnids finishes processing a file, to expunge old data and
