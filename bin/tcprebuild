@@ -29,7 +29,11 @@ before saving to disk.
 
 =head1 TO DO
 
-Improve TO DO list
+=over 4
+
+=item * Implement --files-from (including - for STDIN) to rebuild multiple files at once
+
+=back
 
 =head1 SEE ALSO 
 
