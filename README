@@ -7,6 +7,9 @@ benefit of extra options, bugfixes and it should work on 64-bit machines.
 Uses Net::LibNIDS to do the hard work, which requires the C libnids
 library.
 
+Many thanks to CPAN::Mini, which I learnt much from whilst packaging this
+module.
+
 INSTALLATION
 
 To install this module, run the following commands:

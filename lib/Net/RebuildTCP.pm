@@ -266,6 +266,8 @@ L<http://search.cpan.org/dist/Net-RebuildTCP/>
 
 =head1 ACKNOWLEDGEMENTS
 
+Many thanks to CPAN::Mini, which provided many ideas as I packaged this code
+into a module and shell script.
 
 =head1 LICENSE AND COPYRIGHT
 
