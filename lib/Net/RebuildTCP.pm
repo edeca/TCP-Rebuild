@@ -159,7 +159,7 @@ sub _collector {
     # TODO: We should probably check to see whether the file exists already
     my $fh = new IO::File $self->_generate_filename($args), O_WRONLY | O_CREAT | O_TRUNC;
     if (!defined $fh) {
-      die "Could not open output file!";
+      die "Could not open output file! $!";
     }
     binmode $fh;
     $connections->{$key}{'fh'} = $fh;
