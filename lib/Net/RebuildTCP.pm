@@ -58,7 +58,6 @@ sub rebuild {
   # Net::LibNIDS is not currently object oriented, so this is the best we 
   # can do
   if ($self->{filter} ne '') {
-    # The 
     my $filter = $self->{filter} . ' or (ip[6:2] & 0x1fff != 0)';
     Net::LibNIDS::param::set_pcap_filter($filter);
   }
@@ -100,6 +99,20 @@ sub new {
   $self->{connections} = {};
 
   return $self;
+}
+
+sub _end_connection {
+  my ($self, $key, $conn, $message) = @_;
+
+  my $connections = $self->{connections};
+
+#  _print 1, "Connection from " . $conn->client_ip . " " . $message;
+#  _print 1, " (C->S: " . $connections{$key}{'client_bytes'} . " bytes, C<-S " . $connections{$key}{'server_bytes'} . " bytes)\n";
+
+  # Close the output file, if appropriate
+  undef $connections->{$key}{'fh'};
+
+  delete $connections->{$key};
 }
 
 sub _save_data {
@@ -152,15 +165,15 @@ sub _collector {
     $connections->{$key}{'fh'} = $fh;
   
   } elsif ($args->state == Net::LibNIDS::NIDS_CLOSE()) {
- #   $self->_end_connection($key, $args, "was closed");
+    $self->_end_connection($key, $args, "was closed");
     return;
 
   } elsif ($args->state == Net::LibNIDS::NIDS_RESET()) {
- #   $self->_end_connection($key, $args, "was reset");
+    $self->_end_connection($key, $args, "was reset");
     return;
 
   } elsif ($args->state == Net::LibNIDS::NIDS_TIMED_OUT()) {
- #   $self->_end_connection($key, $args, "timed out");
+    $self->_end_connection($key, $args, "timed out");
     return;
 
   } elsif ($args->state == Net::LibNIDS::NIDS_DATA()) {

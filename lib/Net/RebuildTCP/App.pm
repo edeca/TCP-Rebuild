@@ -49,7 +49,7 @@ sub run {
     "i|infile=s"  => \$config{infile},
     "f|filter=s"  => \$config{filter},
 #    "files-from" => \$config{files-from},
-    "s+|separator+" => \$config{separator}
+    "s|separator+" => \$config{separator}
   ) or pod2usage(2);
 
   eval "require $config{class}";
