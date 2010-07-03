@@ -3,6 +3,8 @@ use warnings;
 
 package TCP::Rebuild::App;
 
+our $VERSION = 0.01;
+
 =head1 NAME
 
 TCP::Rebuild::App - the guts of the tcprebuild command

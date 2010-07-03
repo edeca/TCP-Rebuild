@@ -2,6 +2,7 @@ package TCP::Rebuild;
 
 use warnings;
 use strict;
+use 5.006;
 use Net::LibNIDS 0.04;
 use Socket qw(inet_ntoa);
 use IO::File;
