@@ -1,5 +1,5 @@
-Net-RebuildTCP
-==============
+TCP-Rebuild
+===========
 
 A Perl alternative to utilities such as tcpick or tcpflow, with the 
 benefit of extra options, bugfixes and it should work on 64-bit machines.
@@ -24,21 +24,21 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc Net::RebuildTCP
+    perldoc TCP::Rebuild
 
 You can also look for information at:
 
     RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Net-RebuildTCP
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=TCP-Rebuild
 
     AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Net-RebuildTCP
+        http://annocpan.org/dist/TCP-Rebuild
 
     CPAN Ratings
-        http://cpanratings.perl.org/d/Net-RebuildTCP
+        http://cpanratings.perl.org/d/TCP-Rebuild
 
     Search CPAN
-        http://search.cpan.org/dist/Net-RebuildTCP/
+        http://search.cpan.org/dist/TCP-Rebuild/
 
 
 LICENSE AND COPYRIGHT

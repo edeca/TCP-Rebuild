@@ -1,8 +1,8 @@
-package Net::RebuildTCP;
+package TCP::Rebuild;
 
 use warnings;
 use strict;
-use Net::LibNIDS 0.02;
+use Net::LibNIDS 0.04;
 use Socket qw(inet_ntoa);
 use IO::File;
 use Getopt::Long;
@@ -10,7 +10,7 @@ use Date::Format;
 
 =head1 NAME
 
-Net::RebuildTCP - Rebuild TCP streams to files on disk.
+TCP::Rebuild - Rebuild TCP streams to files on disk.
 
 =head1 VERSION
 
@@ -25,21 +25,16 @@ our $VERSION = '0.01';
 
 Rebuilds TCP streams to plain text files on disk, one file per connection.
 
-  use Net::RebuildTCP;
+  use TCP::Rebuild;
 
-  my $tcp = Net::RebuildTCP->new();
-  $tcp->rebuild('/path/to/file.pcap');
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+  my $r = TCP::Rebuild->new();
+  $r->rebuild('/path/to/file.pcap');
 
 =head1 SUBROUTINES/METHODS
 
 =head2 rebuild
 
-  $tcprebuild->rebuild('/path/to/file.pcap');
+  $r->rebuild('/path/to/file.pcap');
 
 This method rebuilds a specific pcap file using the currently set options.
 
@@ -81,9 +76,9 @@ sub rebuild {
 
 =head2 new
 
-  my $tcp = Net::RebuildTCP->new;
+  my $r = TCP::Rebuild->new;
 
-This method constructs a new Net::RebuildTCP object.  
+This method constructs a new TCP::Rebuild object.  
 
 =cut
 
@@ -224,8 +219,8 @@ David Cannings, C<< <david at edeca.net> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-net-rebuildtcp at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Net-RebuildTCP>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-tcp-rebuild at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=TCP-Rebuild>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 =head1 TODO
@@ -251,7 +246,7 @@ Things that would be nice to implement
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Net::RebuildTCP
+    perldoc TCP::Rebuild
 
 
 You can also look for information at:
@@ -260,19 +255,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Net-RebuildTCP>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=TCP-Rebuild>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Net-RebuildTCP>
+L<http://annocpan.org/dist/TCP-Rebuild>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Net-RebuildTCP>
+L<http://cpanratings.perl.org/d/TCP-Rebuild>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Net-RebuildTCP/>
+L<http://search.cpan.org/dist/TCP-Rebuild/>
 
 =back
 
@@ -295,4 +290,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Net::RebuildTCP
+1; # End of TCP::Rebuild
