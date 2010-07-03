@@ -20,7 +20,6 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-
 =head1 SYNOPSIS
 
 Rebuilds TCP streams to plain text files on disk, one file per connection.
@@ -215,7 +214,7 @@ sub _cleanup {
 
 =head1 AUTHOR
 
-David Cannings, C<< <david at edeca.net> >>
+David Cannings <david at edeca.net>
 
 =head1 BUGS
 

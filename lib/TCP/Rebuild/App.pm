@@ -1,17 +1,17 @@
 use strict;
 use warnings;
 
-package Net::RebuildTCP::App;
+package TCP::Rebuild::App;
 
 =head1 NAME
 
-Net::RebuildTCP::App - the guts of the tcprebuild command
+TCP::Rebuild::App - the guts of the tcprebuild command
 
 =head1 SYNOPSIS
 
   #!/usr/bin/perl
-  use Net::RebuildTCP::App;
-  Net::RebuildTCP::App->run;
+  use TCP::Rebuild::App;
+  TCP::Rebuild::App->run;
 
 =cut
 
@@ -23,7 +23,7 @@ sub _display_version {
   my $class = shift;
   no strict 'refs';
   print "tcprebuild",
-    ($class ne 'Net::RebuildTCP' ? ' (from Net::RebuildTCP)' : q{}),
+    ($class ne 'TCP::Rebuild' ? ' (from TCP::Rebuild)' : q{}),
     ", powered by $class ", $class->VERSION, "\n\n";
   exit;
 }
@@ -37,7 +37,7 @@ something sensible is plain silly.
 
 sub run {
   my %config;
-  $config{class} = 'Net::RebuildTCP';
+  $config{class} = 'TCP::Rebuild';
   my $version;
 
   $config{filter} = '';

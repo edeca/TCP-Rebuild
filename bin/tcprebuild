@@ -2,14 +2,14 @@
 
 use strict;
 use warnings;
-use Net::RebuildTCP::App;
-Net::RebuildTCP::App->run;
+use TCP::Rebuild::App;
+TCP::Rebuild::App->run;
 
 __END__
 
 =head1 NAME
 
-tcprebuild - uses Net::RebuildTCP to reconstruct TCP streams to files on disk
+tcprebuild - uses TCP::Rebuild to reconstruct TCP streams to files on disk
 
 =head1 SYNOPSIS
 
